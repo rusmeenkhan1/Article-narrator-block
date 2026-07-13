@@ -150,7 +150,7 @@ function filterVoicesByLang(voices, lang) {
  * Creates an inline SVG element for player icons.
  * @param {string} name
  */
-function createIcon(name, size = 20) {
+function createIcon(name, size = 20, className = '') {
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('viewBox', '0 0 24 24');
@@ -158,6 +158,7 @@ function createIcon(name, size = 20) {
   svg.setAttribute('height', String(size));
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('focusable', 'false');
+  if (className) svg.setAttribute('class', className);
 
   const path = document.createElementNS(ns, 'path');
   path.setAttribute('fill', 'currentColor');
@@ -257,9 +258,8 @@ export default function decorate(block) {
   playPauseBtn.type = 'button';
   playPauseBtn.className = 'article-narrator-play';
   playPauseBtn.setAttribute('aria-label', 'Play article');
-  const playIcon = createIcon('play', 22);
-  const pauseIcon = createIcon('pause', 22);
-  pauseIcon.hidden = true;
+  const playIcon = createIcon('play', 22, 'article-narrator-icon-play');
+  const pauseIcon = createIcon('pause', 22, 'article-narrator-icon-pause');
   playPauseBtn.append(playIcon, pauseIcon);
 
   const track = document.createElement('div');
@@ -408,10 +408,10 @@ export default function decorate(block) {
   }
 
   function setPlayingState(playing) {
-    playIcon.hidden = playing;
-    pauseIcon.hidden = !playing;
+    playPauseBtn.classList.toggle('is-playing', playing);
     player.classList.toggle('is-playing', playing);
     playPauseBtn.setAttribute('aria-label', playing ? 'Pause article' : 'Play article');
+    playPauseBtn.setAttribute('aria-pressed', String(playing));
   }
 
   async function requestWakeLock() {
